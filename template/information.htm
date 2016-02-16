@@ -1,0 +1,80 @@
+<div class="container" style="width:100%;">
+<div style="width:80%;">
+    <div>
+        <h5>{{htmlContent['description'][LANG]['info_title']}}</h5>
+    </div>
+    <br />
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_age']}}</span>
+        <input type="number" pattern="[0-9]*" inputmode="numeric" class="form-control" placeholder="" ng-model="info.personInfo.age">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon">{{htmlContent['description'][LANG]['info_person_gender']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.gender">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_education']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.education">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_major']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.researchField">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_stronghand']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.hand">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_device']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.device">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_name']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.name">
+        <!-- <span class="input-group-addon errorMessage"></span> -->
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" >{{htmlContent['description'][LANG]['info_person_department']}}</span>
+        <input type="text" class="form-control" placeholder="" ng-model="info.personInfo.department">
+    </div>		            		            
+</div>	    
+<br/>  
+<div>
+    <h5>{{htmlContent['description'][LANG]['info_feedback_question']}}</h5>
+    <textarea rows="8" cols="80" ng-model="info.feedback"></textarea>
+</div>
+<br/>
+<div class="row" ng-repeat="item1 in info.choices">
+	<h5>{{info.question[LANG][$index % 2]}}</h5>
+	<div class="col-xs-2" ng-repeat="item2 in item1">
+    	<div>
+    		<div class="chord" chord-chart chart-indice="1" scale="{{item2[0]}}" angle="{{item2[1]}}" chart-width="0.17" rotate-status="no" circle-status="{{item2[2]}}" center-status = "{{item2[3]}}"></div>
+    		<label class="col-sm-offset-6"><input name="favourite" type="checkbox" ng-model='item2[4]' ng-true-value="1" ng-false-value="0"/></label> 
+    	</div>
+	</div>   
+</div>
+<br/>
+<div>
+	<h5>{{htmlContent['description'][LANG]['info_skilllevel_question']}}</h5>
+	<div class="tb">
+		<tr>
+			<div ng-class="'td'" ng-repeat="item in info.skillLevels[LANG]">		            
+		    	<label style="margin: 10px;"><input name="skilllevel" type="radio" value={{item}} ng-model='$parent.info.skillLevel'/>{{item}}</label> 
+			</div>   	      
+		</tr>
+	</div>      	
+</div>
+<div>
+    <h5>{{htmlContent['description'][LANG]['info_experience_question']}}</h5>
+    <div class="tb">
+        <tr>
+            <div ng-class="'td'" ng-repeat="item in info.experienceYears[LANG]">                    
+                <label style="margin: 10px;"><input name="experience" type="radio" value={{item}} ng-model='$parent.info.experience'/>{{item}}</label> 
+            </div>            
+        </tr>
+    </div>
+</div>
+<button class="btn btn-success btn-lg btn-block" ng-click="submit()">
+    {{htmlContent['description'][LANG]['info_complete']}}
+</button>	            
+</div>

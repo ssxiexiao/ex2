@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-2">
+            <h5>{{htmlContent['description'][LANG]['train_title']}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <span class="col-sm-offset-2">{{train.indice}}</span>
+    </div>
+    <div class="row">
+    	<div class="col-sm-offset-2">
+    		<div chord-chart chart-indice="train.indice" chart-data="getData" chart-width="0.5" rotate-status="yes"></div>
+    	</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-10 col-sm-offset-2 tb">
+        	<tr>
+            	<span class="td name">{{htmlContent['description'][LANG]['train_answer']}}</span>
+	        	<input class="td input" type="number" pattern="[0-9]*" inputmode="numeric" ng-model="train.answer" ng-keydown="keydown($event)">
+	        	<span class="td white" style="width:40%;">%</span>
+	        </tr>
+        </div>
+    </div>
+    <div class="row" ng-show="train.dataVisible > 0">
+        <div class="col-xs-10 col-sm-offset-2 tb">
+        	<tr>
+            	<span class="td name">{{htmlContent['description'][LANG]['train_correct_answer']}}</span>
+            	<input class="td input" type="number" value={{train.data}} readonly="true">
+            	<span class="td white" style="width:40%;">%</span>
+        	</tr>
+        </div>
+    </div>
+    <div class="row">            
+        <button ng-show="train.indice < train.number" class="btn btn-success col-sm-offset-9" style="" ng-click="next()">
+            {{htmlContent['description'][LANG]['train_next']}}
+        </button>
+       	<button ng-show="train.indice === train.number" class="btn btn-success col-sm-offset-9" style="" ng-click="complete()">
+            {{htmlContent['description'][LANG]['train_complete']}}
+        </button>
+    </div>
+</div>

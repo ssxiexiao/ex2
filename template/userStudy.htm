@@ -1,0 +1,50 @@
+<div class="container">
+    <div ng-show="userStudy.partBegin">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                <h4>{{htmlContent['description'][LANG]['userstudy_part_message']+" "+userStudy.partIndice}}</h4>
+                <h4 ng-bind-html="htmlContent['description'][LANG]['userstudy_part_hint']"></h4>
+            </div>
+        </div>
+        <div class="row"> 
+        <button class="col-sm-offset-9 btn btn-success" ng-click="partStart()">{{htmlContent['description'][LANG]['userstudy_part_next']}}</button>
+        </div>
+    </div>
+    <div ng-show="!userStudy.partBegin">
+        <div class="row">
+            <h5 class="col-sm-offset-2">{{htmlContent['description'][LANG]['userstudy_title']}}</h5>
+        </div>
+        <div class="row">
+        	<h5 class="col-sm-offset-2">{{htmlContent['description'][LANG]['userstudy_part_message']+" "+userStudy.partIndice}}</h5>
+            <span class="col-sm-offset-2">{{userStudy.indice}}</span>
+        </div>
+        <div class="row">
+        	<div class="col-sm-offset-2">
+        		<div chord-chart chart-indice="userStudy.indice" chart-data="getData" chart-width="0.5" rotate-status="yes"></div>
+        	</div>
+        </div>      
+        <div class="row">
+            <div class="col-xs-10 col-sm-offset-2 tb">
+            	<tr>
+                    <span class="td name">{{htmlContent['description'][LANG]['userstudy_answer']}}</span>
+                    <input class="td input" type="number" pattern="[0-9]*" inputmode="numeric" ng-model="userStudy.answer" ng-keydown="keydown($event)">
+                    <span class="td white" style="width:5%;">%</span>
+                    <span class="td text-nowrap white" style="width:30%">{{htmlContent['description'][LANG]['userstudy_error_message'][userStudy.errorStatus]}}</span>
+                </tr>
+            </div>
+        </div>
+        <div class="row">  
+        	<div class="col-xs-9 col-sm-offset-2 tb">
+                <button style="display:inline-block" ng-show="userStudy.indice > 0" class="btn btn-success col-sm-offset-0" ng-click="prev()">
+                    {{htmlContent['description'][LANG]['userstudy_prev']}}
+                </button>	            
+                <button style="display:inline-block" ng-show="userStudy.indice < userStudy.number" class="btn btn-success col-sm-offset-8" ng-click="next()">
+                    {{htmlContent['description'][LANG]['userstudy_next']}}
+                </button>
+                <button style="display:inline-block" ng-show="userStudy.indice === userStudy.number" class="btn btn-success col-sm-offset-8" ng-click="complete()">
+                    {{htmlContent['description'][LANG]['userstudy_complete']}}
+                </button>	 
+            </div>        
+        </div>
+    </div>
+</div>

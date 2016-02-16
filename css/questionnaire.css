@@ -1,0 +1,38 @@
+body{
+	padding-top: 50px;
+}
+.tb{
+	display: table;
+}
+.td{
+	display: table-cell;
+}
+.td.name{
+	border-radius:5px;
+	width:20%; 
+	text-align: center; 
+	color: black;
+	background-color: white; 
+}
+.td.input{
+	width:100%; 
+	padding:0;
+	background-color: white;
+	color: black;
+}
+.chord{
+	background-color: rgb(128,128,128);
+}
+.white{
+	color:white;
+}
+h4,h5{
+	font-weight: bold;
+}
+.testing{
+	background-color: rgb(128,128,128);
+}
+.questionnaire {
+	background-color: white;
+	color: black;
+}
