@@ -17,18 +17,18 @@ angular.module('exService',[])
 		};
 		var writeUrl = './server/write.php',
 			readUrl = './server/read.php';
-		var id = null;
+		var id = undefined;
 		var latestIndice = 1,
 			answers = [],
 			datas = [],
 			costs = [],
 			personInfo = {},
-			feedback = null,
-			favourite = null,
-			accurate = null,
-			skillLevel = null,
+			feedback = undefined,
+			favourite = undefined,
+			accurate = undefined,
+			skillLevel = undefined,
 			upload = false,
-			experience = null;
+			experience = undefined;
 		var service = {
 			saveAnswer: function(answer, time, indice) {
 				answers[indice] = answer;
@@ -47,25 +47,29 @@ angular.module('exService',[])
 					data: ''
 				}).success(function(data){
 					id = data['id'];
-					var scale = [0, 0.735, 0.98];
-					console.log(data);
+					var thickness = [0, 0.735, 0.98];
+					var state = [];
 					for(var i = 0; i < 3; i++){
-						for(var j = 0; j < data['angles'].length; j++){
-							if(i > 0){
-								datas.push([scale[i], data['angles'][j], 0, 1]);
-								datas.push([scale[i], data['angles'][j], 1, 1]);
+						for(var j = 0; j < 2; j++){
+							for(var k = 0; k < 2; k++){
+								if(!(i === 0 && k === 1))
+									state.push([thickness[i], j, k]);
 							}
-							datas.push([scale[i], data['angles'][j], 0, 0]);
-							datas.push([scale[i], data['angles'][j], 1, 0]);
+						}
+					}
+					for(var i = 0; i < data['angles'].length; i+=10){
+						for(var j = i; j < i+10; j++){
+							var tmp = state[j-i].slice(0);
+							tmp.splice(1,0,data['angles'][j]);
+							datas.push(tmp);
 						}
 					}
 					shuffle(datas);
+					console.log(datas);
 					for(var i = 0; i < datas.length; i++){
-						answers.push(null);
+						answers.push(undefined);
 						costs.push(0);
 					}
-					// console.log(datas);
-					// alert(id);
 				})
 				.error(function(data,header,config,status){
 					;

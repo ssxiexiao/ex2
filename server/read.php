@@ -18,9 +18,11 @@ function genData(){
 		}
 	}
 	for($i = 0; $i < count($angle); $i++){
-		shuffle($angle[$i]);
-		for($j = 0; $j < count($angle[$i]); $j++){
-			$data[$j] []= $angle[$i][$j];
+		for($k = 0; $k < 10; $k++){
+			shuffle($angle[$i]);
+			for($j = 0; $j < count($angle[$i]); $j++){
+				$data[$j] []= $angle[$i][$j];
+			}
 		}
 	}
 	return $data;

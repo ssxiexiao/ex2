@@ -57,10 +57,11 @@ var drawChrod = function(svg, w, angle, scale, rotateStatus, circleStatus, cente
 		.attr('stroke', 'red')
 		.attr('stroke-width', 0);
 	var center = g.append('circle')
-		.attr('r', width/80)
+		.attr('r', 2)
 		.attr('cx', 0)
 		.attr('cy', 0)
-		.attr('stroke-width', 0);
+		.attr('stroke-width', 0)
+		.attr('transform', 'scale('+(1.0/m)+','+(1.0/m)+')');
 	var d = 'M' + inner.attr('cx') + ',' + (inner.attr('cy') - inner.attr('r'));
 	d += 'A' + inner.attr('r') + ',' + inner.attr('r') + ',0,0,1,';
 	d += (Math.sin(angle) * parseInt(inner.attr('r')) + parseInt(inner.attr('cx'))) + ',' + (-Math.cos(angle) * parseInt(inner.attr('r')) + parseInt(inner.attr('cy')));

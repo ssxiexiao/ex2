@@ -3,9 +3,9 @@ angular.module('exCtrl',[])
 		$scope.statusId = 1;
 		$scope.statusNumber = 6;
 		$scope.LANG = 'CN';
-		$scope.id = null;
+		$scope.id = undefined;
 		$scope.trustHtml = function(html){
-			var newHtml = null;
+			var newHtml = undefined;
 			if(typeof(html) === 'object'){
 				newHtml = {};
 				for(var i in html){
@@ -27,7 +27,6 @@ angular.module('exCtrl',[])
 			$scope.statusId += 1;
 		};
 		$scope.$watch(function(){ return RecordService.getUploadStatus();}, function(newValue){
-			console.log(newValue);
 			if(newValue === true){
 				$scope.statusId = $scope.statusNumber;
 			}
@@ -38,7 +37,7 @@ angular.module('exCtrl',[])
 	})
 	.controller('trainingCtrl', function($scope){
 		$scope.train = {
-			'answer': null,
+			'answer': undefined,
 			'counter': 0,
 			'indice': 1,
 			'number': 10,
@@ -100,14 +99,14 @@ angular.module('exCtrl',[])
 			'indice': 0,
 			'maxBackward': 1,
 			'number': 0,
-			'answer': null,
-			'data': null,
+			'answer': undefined,
+			'data': undefined,
 			'partNumer': 5,
 			'partSize': 0,
 			'partBegin': true,
 			'partIndice': 1,
-			'startTime': null,
-			'endTime': null,
+			'startTime': undefined,
+			'endTime': undefined,
 			'error':{
 				'CN':['','输入不能为空', '必须是0到100的整数'],
 				'EN':['',"input cannot be empty", 'must be an integer between 0 and 100']
@@ -116,7 +115,7 @@ angular.module('exCtrl',[])
 		};
 		$scope.$watch('userStudy.answer', function(newValue) {
 			var reg = new RegExp('^\\d+$');
-			if (newValue === null){
+			if (newValue === undefined){
 				$scope.userStudy.errorStatus = 1;
 			}
 			else if (!reg.test(newValue) || newValue > 100 || newValue < 0){
@@ -195,12 +194,12 @@ angular.module('exCtrl',[])
 			'personInfo': {},
 			'choices': [],
 			'feedback': '',
-			'experience':null,
+			'experience':undefined,
 			'experienceYears':{
 				'CN':['一年以下','一年','两年','三年或以上'],
 				'EN':['less than a year', 'one year', 'two years', 'three years or more']
 			},
-			'skillLevel': null,
+			'skillLevel': undefined,
 			'skillLevels': {
 				'CN':['非常不熟练', '不熟练', '一般', '熟练', '非常熟练'],
 				'EN':['very bad', 'bad', 'normal', 'well', 'very well']
