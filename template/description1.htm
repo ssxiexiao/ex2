@@ -5,7 +5,8 @@
         </div>  
     </div>  
     <div class="row"> 
-        <button class="col-sm-offset-9 btn btn-success" ng-click="statusNext()">
+        <div class="col-sm-1 col-sm-offset-2"><label><input style="width:100%; color: black; " pattern="[0-9]*" inputmode="numeric" ng-model="data.id">id</label></div>
+        <button class="col-sm-offset-6 btn btn-success" ng-click="statusNext()">
             {{htmlContent['description'][LANG]['description_1_next']}}
         </button>
     </div>

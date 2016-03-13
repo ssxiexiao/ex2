@@ -4,6 +4,8 @@ angular.module('exCtrl',[])
 		$scope.statusNumber = 6;
 		$scope.LANG = 'CN';
 		$scope.id = undefined;
+		$scope.data = {};
+		$scope.data.id = undefined;
 		$scope.trustHtml = function(html){
 			var newHtml = undefined;
 			if(typeof(html) === 'object'){
@@ -21,8 +23,13 @@ angular.module('exCtrl',[])
 		$scope.htmlContent = $scope.trustHtml(htmlContent);
 		// console.log($scope.htmlContent);
 		$scope.statusNext = function(){
+			console.log($scope.data.id);
+			if(!$scope.data.id){
+				alert('pls input id');
+				return;
+			}
 			if($scope.statusId === 1){
-				RecordService.getDataFromServer();
+				RecordService.getDataFromServer($scope.data.id);
 			}
 			$scope.statusId += 1;
 		};
@@ -40,7 +47,7 @@ angular.module('exCtrl',[])
 			'answer': undefined,
 			'counter': 0,
 			'indice': 1,
-			'number': 10,
+			'number': 8,
 			'dataVisible': 0,
 			'data': 0
 		};
@@ -73,15 +80,29 @@ angular.module('exCtrl',[])
 			}
 		};
 		$scope.getData = function() {
-			var data = {
-				'scale': Number((Math.random() * 0.98).toFixed(2)),
-				'angle': 1+parseInt(Math.random() * 49),
-				'circleStatus': Math.random() > 0.5 ? 0 : 1,
-				'centerStatus': Math.random() > 0.5 ? 0 : 1
-			};
+			var angle = 1+parseInt(Math.random() * 49);
+			var state = [
+				[0, 1, 0, 0],
+				[0.735, 0, 0, 0],
+				[0.735, 1, 0, 0],
+				[0.735, 0, 1, 0],
+				[0.735, 0, 0, 1],
+				[0.735, 1, 1, 0],
+				[0.735, 1, 0, 1],
+				[0, 1, 0, 1]
+			];
 			// console.log(data);
-			$scope.train.data = data.angle;
-			data.angle /= 100;
+			$scope.train.data = angle;
+			var tmp = state[$scope.train.indice-1].slice(0);
+			tmp.splice(1,0,angle);
+			console.log(tmp);
+			var data = {
+				'scale': tmp[0],
+				'angle': tmp[1] / 100,
+				'circleStatus': tmp[2],
+				'centerStatus': tmp[3],
+				'anchorStatus': tmp[4]
+			}
 			return data;
 		};
 		$scope.keydown = function($event) {
@@ -127,10 +148,11 @@ angular.module('exCtrl',[])
 		});
 		$scope.prev = function() {
 			$scope.userStudy.endTime = new Date();
-			RecordService.saveAnswer($scope.userStudy.answer, $scope.userStudy.endTime.getTime() - $scope.userStudy.startTime.getTime(), $scope.userStudy.indice - 1);
+			RecordService.saveAnswer($scope.userStudy.answer, -3, $scope.userStudy.endTime, $scope.userStudy.indice - 1);
 			$scope.userStudy.indice = $scope.userStudy.indice <= 1 || RecordService.latest() - $scope.userStudy.indice >= $scope.userStudy.maxBackward ? $scope.userStudy.indice : $scope.userStudy.indice - 1;
 			$scope.userStudy.answer = RecordService.getAnswerByIndice($scope.userStudy.indice - 1);
 			$scope.userStudy.startTime = new Date();
+			RecordService.saveAnswer($scope.userStudy.answer, -1, $scope.userStudy.startTime, $scope.userStudy.indice - 1);
 			return;
 		};
 		$scope.next = function() {
@@ -138,12 +160,13 @@ angular.module('exCtrl',[])
 			if ($scope.userStudy.errorStatus != 0) {
 				return;
 			}
-			RecordService.saveAnswer($scope.userStudy.answer, $scope.userStudy.endTime.getTime() - $scope.userStudy.startTime.getTime(), $scope.userStudy.indice - 1);
+			RecordService.saveAnswer($scope.userStudy.answer, -2, $scope.userStudy.endTime, $scope.userStudy.indice - 1);
 			$scope.userStudy.indice += 1;
 			$scope.userStudy.answer = RecordService.getAnswerByIndice($scope.userStudy.indice - 1);
 			RecordService.updateLatest($scope.userStudy.indice);
 			$scope.partInfoUpdate();
 			$scope.userStudy.startTime = new Date();
+			RecordService.saveAnswer($scope.userStudy.answer, -1, $scope.userStudy.startTime, $scope.userStudy.indice - 1);
 			return;
 		};
 		$scope.complete = function() {
@@ -151,7 +174,7 @@ angular.module('exCtrl',[])
 			if ($scope.userStudy.errorStatus != 0) {
 				return;
 			}
-			RecordService.saveAnswer($scope.userStudy.answer, $scope.userStudy.endTime.getTime() - $scope.userStudy.startTime.getTime(), $scope.userStudy.indice - 1);
+			RecordService.saveAnswer($scope.userStudy.answer, -2, $scope.userStudy.endTime, $scope.userStudy.indice - 1);
 			$scope.statusNext();
 			return;
 		};
@@ -161,7 +184,8 @@ angular.module('exCtrl',[])
 				'scale': data[0],
 				'angle': data[1] / 100,
 				'circleStatus': data[2],
-				'centerStatus': data[3]
+				'centerStatus': data[3],
+				'anchorStatus': data[4]
 			};
 			return $scope.userStudy.data;
 		};
@@ -170,16 +194,18 @@ angular.module('exCtrl',[])
 			$scope.userStudy.partIndice = Math.floor(($scope.userStudy.indice - 1) / $scope.userStudy.partSize) + 1;
 		};
 		$scope.partStart = function(){
-			$scope.userStudy.partBegin = false;
 			if($scope.userStudy.partIndice === 1){
 				$scope.userStudy.indice = 1;
 				$scope.userStudy.number = RecordService.getDataNumber();
-				$scope.userStudy.partSize = Math.floor($scope.userStudy.number / 5);
+				$scope.userStudy.partSize = Math.floor($scope.userStudy.number / 4);
 			}
+			$scope.userStudy.partBegin = false;
 			$scope.userStudy.answer = RecordService.getAnswerByIndice($scope.userStudy.indice - 1);
 			$scope.userStudy.startTime = new Date();
+			RecordService.saveAnswer($scope.userStudy.answer, -1, $scope.userStudy.startTime, $scope.userStudy.indice - 1);
 		};
 		$scope.keydown = function($event) {
+			RecordService.saveAnswer($scope.userStudy.answer, event.keyCode, new Date(), $scope.userStudy.indice - 1);
 			if($event.keyCode === 13){
 				if($scope.statusId === 4 && !$scope.userStudy.partBegin){
 					if($scope.userStudy.indice < $scope.userStudy.number) $scope.next();
@@ -219,29 +245,36 @@ angular.module('exCtrl',[])
 		};
 		var angle = 0.4;
 		var scale = [0, 0.735, 0.98];
-		for(var i = 0; i < 4; i++){
-			$scope.info.choices.push([]);
-			var indice = $scope.info.choices.length - 1;
-			for(var j = 0; j < 3; j++){
-				$scope.info.choices[indice].push([scale[j], angle, Math.floor(i/2), 0, 0]);
-				if(j > 0){
-					$scope.info.choices[indice].push([scale[j], angle, Math.floor(i/2), 1, 0]);
-				}
-			}
-		}
+		var state = [
+			[0, 1, 0, 0, 0],
+			[0.735, 0, 0, 0, 0],
+			[0.735, 1, 0, 0, 0],
+			[0.735, 0, 1, 0, 0],
+			[0.735, 0, 0, 1, 0],
+			[0.735, 1, 1, 0, 0],
+			[0.735, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0]
+		];
+		// for(var i = 0; i < 4; i++){
+		// 	$scope.info.choices.push([]);
+		// 	var indice = $scope.info.choices.length - 1;
+		// 	for(var j = 0; j < 3; j++){
+		// 		$scope.info.choices[indice].push([scale[j], angle, Math.floor(i/2), 0, 0]);
+		// 		if(j > 0){
+		// 			$scope.info.choices[indice].push([scale[j], angle, Math.floor(i/2), 1, 0]);
+		// 		}
+		// 	}
+		// }
 		for(var i = 0; i < 2; i++){
 			$scope.info.choices.push([]);
 			var indice = $scope.info.choices.length - 1;
-			for(var j = 0; j < 3; j++){
-				$scope.info.choices[indice].push([scale[j], angle, 0, 0, 0]);
-				$scope.info.choices[indice].push([scale[j], angle, 1, 0, 0]);
-				if(j > 0){
-					$scope.info.choices[indice].push([scale[j], angle, 0, 1, 0]);
-					$scope.info.choices[indice].push([scale[j], angle, 1, 1, 0]);
-				}
+			for(var j = 0; j < state.length; j++){
+				var tmp = state[j].slice(0);
+				tmp.splice(1,0,angle);
+				$scope.info.choices[indice].push(tmp);
 			}
 		}
-		// console.log($scope.info.choices);
+		console.log($scope.info.choices);
 		$scope.submit = function(){
 			$scope.info.favourite = [];
 			$scope.info.accurate = [];
@@ -249,14 +282,14 @@ angular.module('exCtrl',[])
 				$scope.info.favourite.push([]);
 				var indice = $scope.info.favourite.length - 1;
 				for(var j = 0; j < $scope.info.choices[i].length; j++){
-					$scope.info.favourite[indice].push($scope.info.choices[i][j][4]);
+					$scope.info.favourite[indice].push($scope.info.choices[i][j][5]);
 				}
 			}
 			for(var i = 1; i < $scope.info.choices.length; i+=2){
 				$scope.info.accurate.push([]);
 				var indice = $scope.info.accurate.length - 1;
 				for(var j = 0; j < $scope.info.choices[i].length; j++){
-					$scope.info.accurate[indice].push($scope.info.choices[i][j][4]);
+					$scope.info.accurate[indice].push($scope.info.choices[i][j][5]);
 				}
 			}
 			RecordService.updateInfo($scope.info);

@@ -18,7 +18,7 @@ function genData(){
 		}
 	}
 	for($i = 0; $i < count($angle); $i++){
-		for($k = 0; $k < 10; $k++){
+		for($k = 0; $k < 8; $k++){
 			shuffle($angle[$i]);
 			for($j = 0; $j < count($angle[$i]); $j++){
 				$data[$j] []= $angle[$i][$j];
@@ -27,7 +27,7 @@ function genData(){
 	}
 	return $data;
 }
-function readRecord($path, $mode){
+function readRecord($id, $path, $mode){
 	$retries = 0;
 	$max_retries = 20;
 	$fp = fopen($path, 'r');
@@ -58,38 +58,27 @@ function readRecord($path, $mode){
 
 	$json = json_decode($json_string,true);
 	if($json == null){
-		$json['max_id'] = null;
-		$json['unallocated_id'] = [];
 		$json['data'] = [];
-		$json['unsubmitted_id'] = [];
 	}
-	if(count($json['unallocated_id']) == 0){
-		if($json['max_id'] == null) $json['max_id'] = 4;
-		else $json['max_id'] += 4;
+	while(count($json['data']) < $id){
 		$data = genData();
-		if($json['data'] == null) $json['data'] = [];
 		for($i = 0; $i < count($data); $i++){
-			if($i > 0){
-				$json['unallocated_id'] []= $json['max_id'] - 3 + $i;
-			}
 			$json['data'] []= $data[$i];
-			// $json['unsubmitted_id'] []= $json['max_id'] - 3 + $i;
 		}
-		$returnData = array('angles' => $json['data'][$json['max_id'] - 4], 'id' => $json['max_id'] - 3);
-		$returnJson = json_encode($returnData);
-		echo $returnJson;
 	}
-	else{
-		$returnData = array('angles' => $json['data'][$json['unallocated_id'][0]-1], 'id' => $json['unallocated_id'][0]);
-		$returnJson = json_encode($returnData);
-		$json['unallocated_id'] = array_splice($json['unallocated_id'], 1);
-		echo $returnJson;
-	}
+	$returnData = array('angles' => $json['data'][$id-1], 'id' => $id);
+	$returnJson = json_encode($returnData);
+
+	echo $returnJson;
 	fwrite($fp, json_encode($json));
 	flock($fp, LOCK_UN);
 	fclose($fp);
 	return true;
 }
+
 $dataLog = '../data/experiment2_record.json';
-readRecord($dataLog, 'w+');
+$id = $_GET['id'];
+if($id){
+	readRecord($id, $dataLog, 'w+');
+}
 ?>

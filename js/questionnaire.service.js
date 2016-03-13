@@ -2,10 +2,9 @@ angular.module('exService',[])
 	.factory('RecordService', function($http) {
 		var shuffle = function (aArr){
 			var iLength = aArr.length,
-			    i = iLength,
-		        mTemp,
-		        iRandom,
-		        count = 10;
+			    	i = iLength,
+		        	mTemp,
+		        	iRandom;
 			    while(i--){
 			        if(i !== (iRandom = Math.floor(Math.random() * iLength))){
 			            mTemp = aArr[i].slice(0);
@@ -30,35 +29,42 @@ angular.module('exService',[])
 			upload = false,
 			experience = undefined;
 		var service = {
-			saveAnswer: function(answer, time, indice) {
+			saveAnswer: function(answer, keycode, time, indice) {
 				answers[indice] = answer;
-				costs[indice] += time;
+				costs[indice].push({
+					time: time,
+					keycode: keycode
+				});
+				console.log(indice+1, answers[indice], costs[indice][costs[indice].length - 1]);
 			},
 			getId: function(){
 				return id;
 			},
-			getDataFromServer: function(){
+			getDataFromServer: function(tid){
 				$http({
 					url: readUrl,
 					method: "POST",
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
-					data: ''
+					params: {
+						id: tid
+					}
 				}).success(function(data){
 					id = data['id'];
-					var thickness = [0, 0.735, 0.98];
-					var state = [];
-					for(var i = 0; i < 3; i++){
-						for(var j = 0; j < 2; j++){
-							for(var k = 0; k < 2; k++){
-								if(!(i === 0 && k === 1))
-									state.push([thickness[i], j, k]);
-							}
-						}
-					}
-					for(var i = 0; i < data['angles'].length; i+=10){
-						for(var j = i; j < i+10; j++){
+					//thickness, circle, center, anchor
+					var state = [
+						[0, 1, 0, 0],
+						[0.735, 0, 0, 0],
+						[0.735, 1, 0, 0],
+						[0.735, 0, 1, 0],
+						[0.735, 0, 0, 1],
+						[0.735, 1, 1, 0],
+						[0.735, 1, 0, 1],
+						[0, 1, 0, 1]
+					];
+					for(var i = 0; i < data['angles'].length; i+=8){
+						for(var j = i; j < i+8; j++){
 							var tmp = state[j-i].slice(0);
 							tmp.splice(1,0,data['angles'][j]);
 							datas.push(tmp);
@@ -68,7 +74,7 @@ angular.module('exService',[])
 					console.log(datas);
 					for(var i = 0; i < datas.length; i++){
 						answers.push(undefined);
-						costs.push(0);
+						costs.push([]);
 					}
 				})
 				.error(function(data,header,config,status){
